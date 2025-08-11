@@ -1,0 +1,40 @@
+/* Agrega los selectores en las siguientes sentencias según indican los comentarios: */
+
+
+/* Todos los elementos de la pagina */
+ * {
+    font: 1em/1.3 Arial, Helvetica, sans-serif;
+}
+
+/* Todos los parrafos de la pagina */
+ p {
+    color: #555;
+}
+
+/* Párrafos dentro de un elemento con #primero */
+ div#primero > p {
+    color: #336699;
+}
+
+/* Todos los enlaces la pagina */
+ a {
+    color: #CC3300;
+}
+
+/* Elementos "em" dentro de un elemento con #primero */
+ div#primero em {
+    background: #ffff4d;
+    padding: .1em;
+}
+
+/* Elementos "em" de clase "especial", en toda la pagina */
+ em.especial {
+    background: #FFCC99;
+    border: 1px solid #FF9900;
+    padding: .1em;
+}
+
+/* Elementos "span" dentro de un elemento con .normal */
+ .normal span {
+    font-weight: bold;
+}
