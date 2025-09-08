@@ -1,0 +1,135 @@
+/* ######################################## */
+/* TIPOGRAFÍA BASE */
+/* ######################################## */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+@font-face {
+  font-family: 'StarJedi';
+  src: url('fonts/Starjedi.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* ######################################## */
+/* HEADER */
+/* ######################################## */
+.header {
+  background-image: url('img/fondo.jpg');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+}
+
+.header .container {
+  position: relative;
+  z-index: 1;
+}
+
+.header h1 {
+  font-family: 'StarJedi', sans-serif;
+  letter-spacing: 2px;
+  color: #ffe81f;
+  text-shadow: 
+    0 0 10px #ffe91fb9,
+    0 0 20px #ffcc00a4,
+    0 0 40px #ffcc009c;
+}
+
+/* ######################################## */
+/* EXPERIENCIAS */
+/* ######################################## */
+.experiencias {
+  background-color: #f7f7f7;
+}
+
+.card-img-top {
+  object-fit: cover;
+  max-height: 220px;
+}
+
+.card .btn {
+  border: none;
+}
+
+.card {
+  transition: transform 0.4s ease;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* ######################################## */
+/* SOBRE TATOOINE */
+/* ######################################## */
+.info .texto-legible {
+  max-width: none;
+  font-size: clamp(1rem, 0.95rem + 0.5vw, 1.125rem);
+  line-height: 1.6;
+  text-align: center;
+  margin-left: 8vw;
+  margin-right: 8vw;
+}
+
+/* ######################################## */
+/* CONTACTO */
+/* ######################################## */
+.contacto {
+  background-color: #eee;
+}
+
+/* ######################################## */
+/* BOTÓN VOLVER ARRIBA */
+/* ######################################## */
+.back-to-top {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  display: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 1.25rem;
+  line-height: 1;
+  box-shadow: 0 4px 12px rgba(0,0,0,.3);
+  z-index: 1050;
+}
+
+.back-to-top.show {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ######################################## */
+/* MEDIA QUERIES */
+/* ######################################## */
+@media (max-width: 991.98px) {
+  .header .display-5 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .header .lead {
+    font-size: 1.05rem;
+  }
+  .card-img-top {
+    max-height: 200px;
+  }
+  section .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
