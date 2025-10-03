@@ -1,0 +1,59 @@
+/* Estilo base */
+body {
+  font-family: Arial, sans-serif;
+  background-color: white;
+  color: black;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+#pokedex {
+  margin-top: 20px;
+}
+
+img {
+  width: 150px;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+/* Botón base */
+button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Tema claro */
+.light {
+  background-color: white;
+  color: black;
+}
+
+.light #themeBtn {
+  background-color: #f1f1f1;
+  color: black;
+}
+
+/* Tema oscuro */
+.dark {
+  background-color: #1e1e1e;
+  color: white;
+}
+
+.dark #themeBtn {
+  background-color: #444;
+  color: white;
+}
+
+
+
+
+
