@@ -1,0 +1,5 @@
+cd "c/Users/Anthony/Documents/Codigo JAP/extras/Minecraft clon"
+
+g++ -std=c++17 -O2 "mini_minecraft.cpp" -o "mini_mc.exe" $(pkg-config --cflags --libs raylib)
+
+./mini_mc.exe
