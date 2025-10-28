@@ -17,12 +17,29 @@
 
 main {
     min-height: calc(100vh - 100px);
-  }
+}
 
 .checked{
     color: orange;
 }
 
+/* hace que el offcanvas se adapte al contenido */
 .offcanvas-top{
     height: fit-content;
+}
+
+.offcanvas{
+    overflow:visible;
+}
+
+.offcanvas-body{
+    overflow:visible;
+}
+
+.offcanvas .dropdown-menu{
+    z-index:1060;
+}
+
+.btn.dropdown-toggle::after {
+    display: none !important;
 }
