@@ -1,0 +1,180 @@
+/* === GENERAL === */
+body {
+  background-color: #0f1115;
+  color: #e9ecef;
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+header {
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+}
+
+header h1 {
+  color: #ffc107;
+  font-weight: 700;
+}
+
+header p {
+  color: #b5b5b5;
+  margin-bottom: 0;
+}
+
+/* === BUSCADOR === */
+input[type="search"] {
+  background-color: #1a1f27;
+  border: 1px solid #2a2f36;
+  color: #fff;
+}
+
+input[type="search"]::placeholder {
+  color: #888;
+}
+
+input[type="search"]:focus {
+  background-color: #202631;
+  color: #fff;
+  outline: none;
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+}
+
+/* === BOTONES === */
+.btn-primary {
+  background-color: #0d6efd;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+}
+
+.btn-outline-light {
+  border-color: #ccc;
+  color: #ccc;
+}
+
+.btn-outline-light:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
+.btn-warning {
+  color: #000;
+  font-weight: 600;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+/* === SPINNER === */
+.spinner-wrap {
+  min-height: 120px;
+}
+
+/* === CARDS DE RECETAS === */
+.card {
+  background-color: #1a1f27;
+  border: 1px solid #2a2f36;
+  border-radius: 0.6rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 15px rgba(255, 193, 7, 0.3);
+}
+
+.card img {
+  border-top-left-radius: 0.6rem;
+  border-top-right-radius: 0.6rem;
+}
+
+.card-title {
+  color: #ffffff !important; /* Blanco puro para buena lectura */
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.card .badge {
+  background-color: #0d6efd;
+}
+
+/* === MODAL DE DETALLES === */
+.modal-content {
+  background-color: #1a1f27;
+  border: 1px solid #2a2f36;
+  color: #e9ecef;
+}
+
+.modal-header {
+  border-bottom: 1px solid #2a2f36;
+}
+
+.modal-footer {
+  border-top: 1px solid #2a2f36;
+}
+
+/* === LISTA DE INGREDIENTES === */
+#mealIngredients {
+  list-style-type: square;
+  padding-left: 1.2rem;
+}
+
+#mealIngredients li {
+  margin-bottom: 0.25rem;
+}
+
+/* === BADGES === */
+.badge {
+  background-color: #0d6efd;
+  font-weight: 500;
+}
+
+.badge.bg-secondary {
+  background-color: #6c757d !important;
+}
+
+/* === ALERTAS === */
+.alert {
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  color: #664d03;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #842029;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 576px) {
+  header h1 {
+    font-size: 1.7rem;
+  }
+
+  .btn-lg {
+    font-size: 1rem;
+    padding: 0.6rem 1rem;
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+}
+
+/* === EXTRAS === */
+/* Oculta la flecha de botones dropdown (si se usa) */
+.btn.dropdown-toggle::after {
+  display: none !important;
+}
