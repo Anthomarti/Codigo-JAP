@@ -41,98 +41,79 @@
   </div>
 
   <script>
-    // === Configurá estos valores ===
+    // ===== config =====
     const username = "Anthomarti";
-    const repo     = "Codigo-JAP";   // ¡respetá mayúsculas/minúsculas del repo!
-    const branch   = "";             // ej. "main" o "master" (vacío = default)
+    const repo     = "Codigo-JAP";
+    const branch   = "main"; // poné "master" si tu rama por defecto es master
 
-    // Token opcional desde query (?token=ghp_xxx) para evitar rate-limit o acceder a repos privados
-    const token = new URL(location.href).searchParams.get("token") || "";
+    // jsDelivr data API: devuelve el árbol de archivos
+    // https://data.jsdelivr.com/v1/package/gh/:user/:repo@:version
+    const DATA_URL = `https://data.jsdelivr.com/v1/package/gh/${username}/${repo}@${branch}`;
 
-    const headers = {
-      "Accept": "application/vnd.github+json"
-      // "User-Agent" no se puede setear desde el navegador; ya hay uno del browser
-    };
-    if (token) headers["Authorization"] = `Bearer ${token}`;
+    const container = document.getElementById("fileList");
+    const loading   = document.getElementById("loading");
 
-    const apiBase = `https://api.github.com/repos/${username}/${repo}/contents`;
-
-    async function getRepoContent(path = "") {
-      const ref = branch ? `?ref=${encodeURIComponent(branch)}` : "";
-      const url = `${apiBase}/${encodeURIComponent(path).replace(/%2F/g,'/')}${path ? ref : ref}`;
-      const res = await fetch(url, { headers });
-
-      if (!res.ok) {
-        // Intentamos leer mensaje de GitHub (rate limit, not found, etc.)
-        let msg = `HTTP ${res.status}`;
-        try {
-          const json = await res.json();
-          if (json && json.message) msg += ` — ${json.message}`;
-        } catch (_) {}
-        throw new Error(msg);
+    // Recorre recursivamente el árbol de jsDelivr para obtener directorios de nivel 1
+    function flattenDirs(files, base = "") {
+      const out = [];
+      for (const f of files) {
+        const path = base ? `${base}/${f.name}` : f.name;
+        if (f.type === "directory") {
+          out.push({ name: f.name, path, files: f.files || [] });
+        }
       }
-      return res.json();
+      return out;
+    }
+
+    function dirHasIndexHtml(dir) {
+      // busca index.html en ese directorio (solo nivel directo)
+      return (dir.files || []).some(x => x.type === "file" && x.name === "index.html");
     }
 
     async function generateList() {
-      const container = document.getElementById("fileList");
-      const loading   = document.getElementById("loading");
-
       try {
-        const root = await getRepoContent("");               // lista raíz
-        const folders = root.filter(it => it.type === "dir");
+        const res = await fetch(DATA_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json(); // { files: [...] }
 
-        if (!folders.length) {
-          container.innerHTML = "<p class='muted'>No hay carpetas en el repositorio.</p>";
+        const level1Dirs = flattenDirs(data.files || []);
+
+        if (!level1Dirs.length) {
+          container.innerHTML = "<p class='text-secondary'>No hay carpetas en el repositorio.</p>";
           return;
         }
 
-        const list = document.createElement("ul");
-        list.className = "list-unstyled";
+        const ul = document.createElement("ul");
+        ul.className = "list-unstyled";
 
-        // Buscamos en paralelo el contenido de cada carpeta (una capa)
-        const inspections = await Promise.allSettled(
-          folders.map(async (folder) => {
-            const sub = await getRepoContent(folder.path);
-            const hasIndex = sub.some(f => f.name === "index.html");
-            return { folder, hasIndex };
-          })
-        );
-
-        inspections.forEach((result, i) => {
+        level1Dirs.forEach(dir => {
           const li = document.createElement("li");
           li.className = "folder";
-
-          if (result.status === "fulfilled") {
-            const { folder, hasIndex } = result.value;
-            li.innerHTML = hasIndex
-              ? `<span><a href="./${encodeURIComponent(folder.name)}/index.html" target="_blank">${folder.name}</a></span>
-                 <span class="badge badge-ok">index.html</span>`
-              : `<span>${folder.name}</span>
-                 <span class="badge badge-miss">sin index.html</span>`;
-          } else {
-            const folder = folders[i];
+          if (dirHasIndexHtml(dir)) {
             li.innerHTML = `
-              <span>${folder.name}</span>
-              <span class="small-err">error: ${result.reason.message}</span>
-            `;
+              <span><a href="./${encodeURIComponent(dir.name)}/index.html" target="_blank">${dir.name}</a></span>
+              <span class="badge bg-success">index.html</span>`;
+          } else {
+            li.innerHTML = `
+              <span>${dir.name}</span>
+              <span class="badge bg-secondary">sin index.html</span>`;
           }
-          list.appendChild(li);
+          ul.appendChild(li);
         });
 
         container.innerHTML = "";
-        container.appendChild(list);
-
-      } catch (err) {
-        document.getElementById("fileList").innerHTML =
-          `<p class="text-danger">Error al obtener contenido: <code>${err.message}</code></p>
-           <p class="muted">Verificá: nombre de repo/usuario, si el repo es privado, el branch (<code>${branch||'default'}</code>) y el límite de la API.</p>`;
+        container.appendChild(ul);
+      } catch (e) {
+        container.innerHTML = `
+          <p class="text-danger">Error al obtener contenido (jsDelivr): <code>${e.message}</code></p>
+          <p class="text-secondary mb-0">Si persiste, probá la Opción A (token) o verificá rama <b>${branch}</b>.</p>`;
       } finally {
-        loading.remove();
+        loading?.remove();
       }
     }
 
     generateList();
   </script>
+
 </body>
 </html>
