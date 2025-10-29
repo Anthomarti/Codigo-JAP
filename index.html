@@ -3,103 +3,66 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Código JAP - Índice automático</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Código JAP — Índice</title>
   <style>
-    body { background:#121212; color:#eee; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu; }
-    a { color:#58a6ff; text-decoration:none; }
-    a:hover { text-decoration:underline; }
-    .container { max-width: 900px; padding: 40px 16px; }
-    .item { padding:10px 0; border-bottom:1px solid #2a2a2a; }
-    .muted { color:#9aa0a6; font-size:.9rem; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#121212; color:#eee; margin:0; }
+    main { max-width: 900px; margin: 48px auto; padding: 0 16px; }
+    h1 { font-size: 1.6rem; margin: 0 0 8px; }
+    p.muted { color:#9aa0a6; margin: 0 0 16px; }
+    a { color:#58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .link { display:block; padding:8px 0; border-bottom:1px solid #2b2b2b; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1 class="mb-2">Índice del repo</h1>
-    <p class="muted">Enlaces a cada <strong>index.html</strong> encontrado (búsqueda recursiva y sin distinguir mayúsculas/minúsculas).</p>
+  <main>
+    <h1>Índice</h1>
+    <p class="muted">Generado desde <code>indexes.json</code> (sin APIs).</p>
     <div id="list"></div>
-    <div id="loading" class="mt-3">Cargando…</div>
-  </div>
+    <p id="loading" class="muted">Cargando…</p>
+  </main>
 
   <script>
-    const username = "Anthomarti";
-    const repo = "Codigo-JAP";
-    const branch = "main"; // cambiá si usás otra rama por defecto
-    const START_PATH = ""; // raíz del repo
-    const MAX_DEPTH = 5;   // cuántos niveles de subcarpetas recorrer
+    const MANIFEST = "indexes.json";
 
-    const api = (path="") =>
-      `https://api.github.com/repos/${username}/${repo}/contents/${path}?ref=${branch}`;
+    function toHref(p) { return "./" + encodeURI(p); }
+    function labelFrom(p) { return p.replace(/\/index\.html?$/i, ""); }
 
-    async function fetchJSON(url) {
-      const r = await fetch(url);
-      if (!r.ok) throw new Error(`${r.status} ${r.statusText} al pedir ${url}`);
-      return r.json();
-    }
-
-    // devuelve true si el nombre es index.html / Index.html / index.htm, etc.
-    function isIndexFile(name) {
-      return /^index\.html?$/i.test(name);
-    }
-
-    // Recorre el repo recursivamente y devuelve una lista de rutas de index.* encontrados
-    async function walk(path = START_PATH, depth = 0, acc = []) {
-      if (depth > MAX_DEPTH) return acc;
-      const items = await fetchJSON(api(path));
-
-      // ordenar carpetas primero, luego archivos
-      items.sort((a, b) => (a.type === b.type) ? a.name.localeCompare(b.name) : (a.type === "dir" ? -1 : 1));
-
-      for (const it of items) {
-        if (it.type === "file" && isIndexFile(it.name)) {
-          acc.push(it.path);
-        } else if (it.type === "dir") {
-          // evitar carpetas “ruidosas”
-          if (it.name === ".git" || it.name === "node_modules") continue;
-          await walk(it.path, depth + 1, acc);
-        }
-      }
-      return acc;
-    }
-
-    function toPagesHref(indexPath) {
-      // Link relativo para GitHub Pages (respeta espacios/acentos)
-      // Si indexPath = "Carpeta/Sub/index.html" -> "./Carpeta/Sub/index.html"
-      return "./" + encodeURI(indexPath);
-    }
-
-    async function render() {
-      const listEl = document.getElementById("list");
-      const loadingEl = document.getElementById("loading");
+    (async () => {
+      const list = document.getElementById("list");
+      const loading = document.getElementById("loading");
       try {
-        const indices = await walk();
-        if (indices.length === 0) {
-          listEl.innerHTML = "<p>No se encontraron archivos index.html en el repositorio.</p>";
+        const r = await fetch(MANIFEST, { cache: "no-store" });
+        if (!r.ok) throw new Error(`No se pudo leer ${MANIFEST} (HTTP ${r.status})`);
+        const j = await r.json();
+
+        // Normalizamos y filtramos el propio index de la raíz si existe
+        const items = (j.items || [])
+          .map(String)
+          .filter(p => p.toLowerCase() !== "index.html") // evita enlazarse a sí mismo
+          .sort((a,b) => a.localeCompare(b));
+
+        if (!items.length) {
+          list.innerHTML = `<p class="muted">No hay entradas en el manifiesto.</p>`;
         } else {
-          // Orden alfabético por ruta
-          indices.sort((a,b) => a.localeCompare(b));
           const frag = document.createDocumentFragment();
-          for (const p of indices) {
-            const li = document.createElement("div");
-            li.className = "item";
-            const href = toPagesHref(p);
-            // mostrar la carpeta contenedora como texto
-            const label = p.replace(/\/index\.html?$/i, "");
-            li.innerHTML = `<a href="${href}" target="_blank">${label}</a> <span class="muted">/index.html</span>`;
-            frag.appendChild(li);
+          for (const p of items) {
+            const a = document.createElement("a");
+            a.className = "link";
+            a.href = toHref(p);
+            a.target = "_blank";
+            a.textContent = labelFrom(p);
+            frag.appendChild(a);
           }
-          listEl.innerHTML = "";
-          listEl.appendChild(frag);
+          list.innerHTML = "";
+          list.appendChild(frag);
         }
       } catch (e) {
-        listEl.innerHTML = `<p class="text-danger">Error: ${e.message}</p>`;
+        list.innerHTML = `<p style="color:#ffb4b4">Error: ${e.message}</p>`;
       } finally {
-        loadingEl.remove();
+        loading?.remove();
       }
-    }
-
-    render();
+    })();
   </script>
 </body>
 </html>
