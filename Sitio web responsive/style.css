@@ -1,0 +1,19 @@
+body { background-color: #f4f6f8; }
+
+/* Carrusel centrado y con borde gris suave */
+.tagline {
+  display: block;          /* fuerza el centrado */
+  text-align: center;      /* texto centrado dentro del bloque */
+  margin: 0.5rem auto;     /* centrado horizontal */
+  padding: .4rem .9rem;
+  border: 2px solid #d5d9dd;
+  border-radius: .25rem;
+  color: #6c757d;
+  background: #fff;
+  max-width: 700px;
+  font-weight: 500;
+}
+
+.btn-outline-secondary { background: #fff; }
+.shadow-sm { box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important; }
+.container { padding-bottom: 2rem; }
