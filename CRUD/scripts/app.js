@@ -1,3 +1,4 @@
+// Anthony, Hiago, Facundo, Mariana, Artur y Nicole
 // URL base del mockapi
 const URL = 'https://690bc4da6ad3beba00f620ca.mockapi.io/users';
 
